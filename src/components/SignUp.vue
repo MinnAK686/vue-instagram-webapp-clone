@@ -1,4 +1,32 @@
-<script setup></script>
+<script setup>
+import { reactive, ref } from "@vue/reactivity";
+import { useUserStore } from "../store/users";
+
+let users = useUserStore();
+
+let loading = ref(false);
+let credentials = reactive({
+    email: "",
+    password: "",
+    fullname: "",
+    username: "",
+});
+let clearLog = () => {
+    credentials.email = "";
+    credentials.fullname = "";
+    credentials.username = "";
+    credentials.password = "";
+};
+let signup = async () => {
+    loading.value = true;
+    await users.handleSignUp(credentials);
+    if (users.user) {
+        console.log(users.user);
+        clearLog();
+    }
+    loading.value = false;
+};
+</script>
 
 <template>
     <div>
@@ -10,16 +38,48 @@
             Login with Facebook
         </v-btn>
         <p class="text-grey">OR</p>
-        <form>
-            <input type="email" class="form-control" placeholder="Email" />
-            <input type="text" class="form-control" placeholder="Full Name" />
-            <input type="text" class="form-control" placeholder="Username" />
+        <form @submit.prevent="signup">
+            <p class="text-red" v-if="users.errorMsg">{{ users.errorMsg }}</p>
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Email"
+                v-model="credentials.email"
+            />
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Full Name"
+                v-model="credentials.fullname"
+            />
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Username"
+                v-model="credentials.username"
+            />
             <input
                 type="password"
                 class="form-control"
                 placeholder="Password"
+                v-model="credentials.password"
             />
-            <v-btn color="blue" block class="my-3"> Sign up </v-btn>
+            <v-btn
+                type="submit"
+                color="blue"
+                block
+                class="my-3"
+                :loading="loading"
+                :disabled="
+                    !credentials.email ||
+                    !credentials.fullname ||
+                    !credentials.username ||
+                    !credentials.password ||
+                    loading
+                "
+            >
+                Sign up
+            </v-btn>
         </form>
     </div>
 </template>

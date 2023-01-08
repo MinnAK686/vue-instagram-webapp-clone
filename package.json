@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@mdi/font": "5.9.55",
+        "@supabase/supabase-js": "^2.2.3",
         "pinia": "^2.0.28",
         "roboto-fontface": "*",
         "sass": "^1.57.1",
